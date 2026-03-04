@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Voting System - CTU DB</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>CTU-DB Student Council Elections</h1>
+    <p>Online Voting System</p>
+
+    <div id="loginSection">
+        <h2>Student Login</h2>
+        <input type="text" id="studentId" placeholder="Enter Student ID" required>
+        <br>
+        <button onclick="login()">Login to Vote</button>
+        <p id="loginMessage"></p>
+    </div>
+
+    <div id="votingSection" class="hidden">
+        <h2>Cast Your Vote</h2>
+        <form id="voteForm">
+            <h3>President</h3>
+            <label><input type="radio" name="president" value="John Cruz" required> John Cruz</label>
+            <label><input type="radio" name="president" value="Mark Reyes"> Mark Reyes</label>
+
+            <h3>Vice President</h3>
+            <label><input type="radio" name="vice" value="Anna Lopez" required> Anna Lopez</label>
+            <label><input type="radio" name="vice" value="Jane Santos"> Jane Santos</label>
+
+            <h3>Secretary</h3>
+            <label><input type="radio" name="secretary" value="Maria Lee" required> Maria Lee</label>
+            <label><input type="radio" name="secretary" value="Paula Kim"> Paula Kim</label>
+
+            <h3>Treasurer</h3>
+            <label><input type="radio" name="treasurer" value="David Tan" required> David Tan</label>
+            <label><input type="radio" name="treasurer" value="Kevin Ong"> Kevin Ong</label>
+
+            <h3>BSIT Representative</h3>
+            <label><input type="radio" name="bsit" value="Chris Lim" required> Chris Lim</label>
+            <label><input type="radio" name="bsit" value="Leo Chan"> Leo Chan</label>
+
+            <h3>BSHM Representative</h3>
+            <label><input type="radio" name="bshm" value="Sophia Cruz" required> Sophia Cruz</label>
+            <label><input type="radio" name="bshm" value="Lara Gomez"> Lara Gomez</label>
+
+            <br><br>
+            <button type="submit">Submit Vote</button>
+        </form>
+    </div>
+
+    <div id="resultsSection" class="hidden">
+        <h2>Election Results</h2>
+        <div id="results" class="results"></div>
+        <br>
+        <button onclick="logout()">Back to Login</button>
+        <button onclick="resetElection()">Reset Election Data</button>
+    </div>
+
+    <div class="footer">
+        © 2026 CTU-DB Online Voting System
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
