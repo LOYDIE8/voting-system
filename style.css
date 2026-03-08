@@ -1,69 +1,92 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #002147, #005792);
+    background-color: rgb(0, 12, 42); 
     color: white;
     text-align: center;
+    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('CTU_logo.png'); 
+    background-size: contain; 
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.65; 
+    z-index: -1;
 }
 
 .container {
     width: 90%;
-    max-width: 700px;
+    max-width: 600px;
     margin: 40px auto;
-    background: rgba(0,0,0,0.7);
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    background: rgba(0, 5, 20, 0.90); 
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+    border-top: 4px solid rgb(255, 215, 0);
 }
 
-h1 {
-    color: gold;
-}
-
+h1 { color: #FFD700; }
 h2 {
-    margin-top: 30px;
-    border-bottom: 1px solid gold;
+    margin-top: 20px;
+    border-bottom: 1px solid #FFD700;
     padding-bottom: 5px;
 }
 
-input[type="text"] {
-    padding: 10px;
-    width: 80%;
+input[type="text"], input[type="password"] {
+    padding: 12px;
+    width: 85%;
     margin: 10px 0;
     border-radius: 5px;
-    border: none;
+    border: 1px solid rgb(255, 215, 0);
+    background: rgba(255, 255, 255, 0.9);
+    color: rgb(51, 51, 51);
 }
 
 button {
-    padding: 10px 20px;
-    background: gold;
+    padding: 12px 25px;
+    background: rgb(255, 215, 0);
+    color: rgb(0, 31, 63);
     border: none;
     font-weight: bold;
     cursor: pointer;
     border-radius: 5px;
+    margin-top: 10px;
+    transition: 0.3s;
 }
 
-button:hover {
-    background: orange;
-}
+button:hover { background: rgb(255, 170, 0); }
 
-label {
-    display: block;
-    margin: 5px;
+.admin-btn { background: rgb(23, 162, 184); color: white; border: none; width: 100%; margin-bottom: 10px;}
+.admin-btn:hover { background: rgb(19, 132, 150); }
+
+.danger-btn { background: rgb(220, 53, 69); color: white; border: none; width: 100%;}
+.danger-btn:hover { background: rgb(200, 35, 51); }
+
+.submit-btn { width: 100%; font-size: 16px; background: #28a745; color: white; }
+.submit-btn:hover { background: rgb(33, 136, 56); }
+
+.toggle-link {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #FFD700;
     cursor: pointer;
+    text-decoration: underline;
 }
 
-.hidden {
-    display: none;
-}
+.message { color: #ff6b6b; font-weight: bold; font-size: 14px; }
+.hidden { display: none !important; }
 
-.results {
-    text-align: left;
-    margin-top: 20px;
-}
-
-.footer {
-    margin-top: 20px;
-    font-size: 12px;
-    color: lightgray;
-}
+.results { text-align: left; margin-top: 20px; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px;}
+.candidate-group { text-align: left; margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 5px;}
+.candidate-group h3 { margin-top: 0; color: #FFD700; font-size: 18px;}
+label { display: block; margin: 8px 0; cursor: pointer; font-size: 16px;}

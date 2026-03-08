@@ -3,65 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Voting System - CTU DB</title>
+    <title>Online Voting System</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="container">
     <h1>CTU-DB Student Council Elections</h1>
-    <p>Online Voting System</p>
 
     <div id="loginSection">
-        <h2>Student Login</h2>
-        <input type="text" id="studentId" placeholder="Enter Student ID" required>
+        <div id="studentLoginBox">
+            <h2>Student Voter Login</h2>
+            <input type="text" id="studentName" placeholder="Enter Last Name " required>
+            <input type="text" id="studentId" placeholder="Enter Student ID " required>
+            <button onclick="loginStudent()">Login to Vote</button>
+            <p id="loginMessage" class="message"></p>
+            <p class="toggle-link" onclick="toggleLogin('admin')">Admin Access</p>
+        </div>
+
+        <div id="adminLoginBox" class="hidden">
+            <h2>System Admin Login</h2>
+            <input type="text" id="adminUser" placeholder="Username" required>
+            <input type="password" id="adminPass" placeholder="Password" required>
+            <button onclick="loginAdmin()" class="admin-btn">Access Dashboard</button>
+            <p id="adminLoginMessage" class="message"></p>
+            <p class="toggle-link" onclick="toggleLogin('student')">Back to Student Login</p>
+        </div>
+    </div>
+
+    <div id="adminDashboard" class="hidden">
+        <h2>Admin Dashboard</h2>
+        <p>Election data is actively being recorded.</p>
+        
+        <div class="admin-controls">
+            <button onclick="showResults()" class="admin-btn">View Live Results</button>
+            <button onclick="resetElection()" class="danger-btn">Reset Entire Election</button>
+        </div>
+        
+        <div id="adminResults" class="results hidden"></div>
         <br>
-        <button onclick="login()">Login to Vote</button>
-        <p id="loginMessage"></p>
+        <button onclick="logout()">Logout Admin</button>
     </div>
 
     <div id="votingSection" class="hidden">
         <h2>Cast Your Vote</h2>
+        <p>Welcome, <span id="voterNameDisplay"></span>!</p>
         <form id="voteForm">
-            <h3>President</h3>
-            <label><input type="radio" name="president" value="John Cruz" required> John Cruz</label>
-            <label><input type="radio" name="president" value="Mark Reyes"> Mark Reyes</label>
-
-            <h3>Vice President</h3>
-            <label><input type="radio" name="vice" value="Anna Lopez" required> Anna Lopez</label>
-            <label><input type="radio" name="vice" value="Jane Santos"> Jane Santos</label>
-
-            <h3>Secretary</h3>
-            <label><input type="radio" name="secretary" value="Maria Lee" required> Maria Lee</label>
-            <label><input type="radio" name="secretary" value="Paula Kim"> Paula Kim</label>
-
-            <h3>Treasurer</h3>
-            <label><input type="radio" name="treasurer" value="David Tan" required> David Tan</label>
-            <label><input type="radio" name="treasurer" value="Kevin Ong"> Kevin Ong</label>
-
-            <h3>BSIT Representative</h3>
-            <label><input type="radio" name="bsit" value="Chris Lim" required> Chris Lim</label>
-            <label><input type="radio" name="bsit" value="Leo Chan"> Leo Chan</label>
-
-            <h3>BSHM Representative</h3>
-            <label><input type="radio" name="bshm" value="Sophia Cruz" required> Sophia Cruz</label>
-            <label><input type="radio" name="bshm" value="Lara Gomez"> Lara Gomez</label>
-
-            <br><br>
-            <button type="submit">Submit Vote</button>
+            <div id="ballotContainer">
+                </div>
+            <br>
+            <button type="submit" class="submit-btn">Submit Vote</button>
         </form>
     </div>
 
-    <div id="resultsSection" class="hidden">
-        <h2>Election Results</h2>
-        <div id="results" class="results"></div>
-        <br>
-        <button onclick="logout()">Back to Login</button>
-        <button onclick="resetElection()">Reset Election Data</button>
+    <div id="successSection" class="hidden">
+        <h2>Vote Submitted!</h2>
+        <p>Your vote has been securely recorded. Thank you for participating.</p>
+        <button onclick="logout()">Return to Home</button>
     </div>
 
     <div class="footer">
-        © 2026 CTU-DB Online Voting System
+        © 2026 CEBU TECHNOLOGICAL UNIVERSITY DB
     </div>
 </div>
 
