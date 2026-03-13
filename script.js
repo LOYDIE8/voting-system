@@ -1,41 +1,14 @@
-const validVoters = [
-    { name: "Capecenio", id: "840816" },
-    { name: "Mendoza", id: "840817" },
-    { name: "Garcia", id: "840818" },
-    { name: "Bautista", id: "840819" },
-    { name: "Aquino", id: "840820" },
-    { name: "Reyes", id: "840821" },
-    { name: "Cruz", id: "840822" },
-    { name: "Ramos", id: "840823" },
-    { name: "Villanueva", id: "840824" },
-    { name: "Del Rosario", id: "840825" },
-    { name: "Alvarez", id: "840826" },
-    { name: "Castro", id: "840827" },
-    { name: "Diaz", id: "840828" },
-    { name: "Gomez", id: "840829" },
-    { name: "Perez", id: "840830" },
-    { name: "Lim", id: "840831" },
-    { name: "Tan", id: "840832" },
-    { name: "Navarro", id: "840833" },
-    { name: "Torres", id: "840834" },
-    { name: "Salazar", id: "840835" }
-];
-
 function initElectionDB() {
-    if (!localStorage.getItem("electionVotes")) {
-        const initialVotes = {
-            president: {"John Cruz": 0, "Mark Reyes": 0},
-            vice: {"Anna Lopez": 0, "Jane Santos": 0},
-            secretary: {"Maria Lee": 0, "Paula Kim": 0},
-            treasurer: {"David Tan": 0, "Kevin Ong": 0},
-            bsit: {"Chris Lim": 0, "Leo Chan": 0},
-            bshm: {"Sophia Cruz": 0, "Lara Gomez": 0},
-            bsie: {"Alice Vargas": 0, "Brian Pineda": 0},
-            bsed: {"Chloe Sy": 0, "Daniel Go": 0},
-            bit_auto: {"Edgar Luna": 0, "Frankie Borja": 0},
-            bit_et: {"Grace Dizon": 0, "Henry Silva": 0},
-            bit_comp: {"Isaac Ramos": 0, "Jared Tolentino": 0}
-        };
+   if (!localStorage.getItem("electionVotes")) {
+        const initialVotes = {};
+        
+        for (let position in electionCandidates) {
+            initialVotes[position] = {};
+            for (let i = 0; i < electionCandidates[position].length; i++) {
+                let candidateName = electionCandidates[position][i];
+                initialVotes[position][candidateName] = 0;
+            }
+        }
         localStorage.setItem("electionVotes", JSON.stringify(initialVotes));
         localStorage.setItem("votedList", JSON.stringify([])); 
     }
@@ -76,6 +49,8 @@ function loginStudent() {
     }
 
     localStorage.setItem("currentSession", "voter_" + studentId);
+    localStorage.setItem("voterCourse", isValid.course);
+
     document.getElementById("voterNameDisplay").innerText = isValid.name;
     document.getElementById("loginSection").classList.add("hidden");
     
@@ -83,32 +58,45 @@ function loginStudent() {
     document.getElementById("votingSection").classList.remove("hidden");
 }
 
+
 function buildBallot() {
     const electionVotes = JSON.parse(localStorage.getItem("electionVotes"));
+    const voterCourse = localStorage.getItem("voterCourse");
     const container = document.getElementById("ballotContainer");
     container.innerHTML = ""; 
 
     const repPositions = ["bsit", "bshm", "bsie", "bsed", "bit_auto", "bit_et", "bit_comp"];
+    const generalPositions = ["president", "vice", "secretary", "treasurer"];
 
     for (let position in electionVotes) {
-        let groupDiv = document.createElement("div");
-        groupDiv.className = "candidate-group";
-        
-        let displayPos = position.toUpperCase().replace("_", " ");
-        if (repPositions.includes(position)) {
-            displayPos += " REPRESENTATIVE";
+        let showPosition = false;
+
+        if (generalPositions.includes(position)) {
+            showPosition = true;
+        } else if (position === voterCourse) {
+            showPosition = true;
         }
 
-        groupDiv.innerHTML = `<h3>${displayPos}</h3>`;
-        
-        for (let candidate in electionVotes[position]) {
-            groupDiv.innerHTML += `
-                <label>
-                    <input type="radio" name="${position}" value="${candidate}" required> 
-                    ${candidate}
-                </label>`;
+        if (showPosition) {
+            let groupDiv = document.createElement("div");
+            groupDiv.className = "candidate-group";
+            
+            let displayPos = position.toUpperCase().replace("_", " ");
+            if (repPositions.includes(position)) {
+                displayPos += " REPRESENTATIVE";
+            }
+
+            groupDiv.innerHTML = `<h3>${displayPos}</h3>`;
+            
+            for (let candidate in electionVotes[position]) {
+                groupDiv.innerHTML += `
+                    <label>
+                        <input type="radio" name="${position}" value="${candidate}" required> 
+                        ${candidate}
+                    </label>`;
+            }
+            container.appendChild(groupDiv);
         }
-        container.appendChild(groupDiv);
     }
 }
 

@@ -14,8 +14,8 @@
     <div id="loginSection">
         <div id="studentLoginBox">
             <h2>Student Voter Login</h2>
-            <input type="text" id="studentName" placeholder="Enter Last Name " required>
-            <input type="text" id="studentId" placeholder="Enter Student ID " required>
+            <input type="text" id="studentName" placeholder="Enter Last Name " required required autocomplete="off">
+            <input type="text" id="studentId" placeholder="Enter Student ID " required autocomplete="off">
             <button onclick="loginStudent()">Login to Vote</button>
             <p id="loginMessage" class="message"></p>
             <p class="toggle-link" onclick="toggleLogin('admin')">Admin Access</p>
@@ -67,6 +67,8 @@
     </div>
 </div>
 
+<script src="voters.js"></script>
 <script src="script.js"></script>
+<script src="candidates.js"></script>
 </body>
 </html>
