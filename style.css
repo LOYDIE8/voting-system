@@ -90,3 +90,71 @@ button:hover { background: rgb(255, 170, 0); }
 .candidate-group { text-align: left; margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 5px;}
 .candidate-group h3 { margin-top: 0; color: #FFD700; font-size: 18px;}
 label { display: block; margin: 8px 0; cursor: pointer; font-size: 16px;}
+
+/* --- Voter History Table Styles --- */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 15px;
+}
+
+.voter-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    background: rgba(0, 5, 20, 0.8);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 14px;
+}
+
+.voter-history-table th {
+    background: rgb(255, 215, 0);
+    color: rgb(0, 12, 42);
+    padding: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.voter-history-table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    vertical-align: top;
+}
+
+.voter-history-table tr:last-child td {
+    border-bottom: none;
+}
+
+.voter-history-table tr:hover {
+    background: rgba(255, 215, 0, 0.05);
+}
+
+.voter-name {
+    font-weight: bold;
+    color: #fff;
+    font-size: 16px;
+}
+
+.voter-id {
+    font-size: 12px;
+    color: #FFD700;
+    margin-top: 4px;
+}
+
+.vote-badge {
+    display: inline-block;
+    background: rgba(23, 162, 184, 0.15);
+    border: 1px solid rgb(23, 162, 184);
+    padding: 6px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    margin: 4px;
+    color: #e0f7fa;
+    line-height: 1.4;
+}
+
+.vote-badge strong {
+    color: #FFD700;
+}

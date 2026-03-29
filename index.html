@@ -23,7 +23,7 @@
 
         <div id="adminLoginBox" class="hidden">
             <h2>System Admin Login</h2>
-            <input type="text" id="adminUser" placeholder="Username" required>
+            <input type="text" id="adminUser" placeholder="Username" required autocomplete="off">
             <input type="password" id="adminPass" placeholder="Password" required>
             <button onclick="loginAdmin()" class="admin-btn">Access Dashboard</button>
             <p id="adminLoginMessage" class="message"></p>
@@ -35,13 +35,14 @@
         <h2>Admin Dashboard</h2>
         <p>Election data is actively being recorded.</p>
         
-        <div class="admin-controls">
+       <div class="admin-controls">
             <button onclick="showResults()" class="admin-btn">View Live Results</button>
+            <button onclick="showVoterHistory()" class="admin-btn" style="background: #e0a800;">View Voter History</button>
             <button onclick="resetElection()" class="danger-btn">Reset Entire Election</button>
         </div>
         
         <div id="adminResults" class="results hidden"></div>
-        <br>
+        <div id="voterHistoryContainer" class="results hidden"></div><br>
         <button onclick="logout()">Logout Admin</button>
     </div>
 

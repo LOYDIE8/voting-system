@@ -11,6 +11,7 @@ function initElectionDB() {
         }
         localStorage.setItem("electionVotes", JSON.stringify(initialVotes));
         localStorage.setItem("votedList", JSON.stringify([])); 
+        localStorage.setItem("detailedVotes", JSON.stringify([]));
     }
 }
 initElectionDB(); 
@@ -108,23 +109,37 @@ document.getElementById("voteForm").addEventListener("submit", function(e) {
 
     const studentId = currentSession.split("_")[1];
     let electionVotes = JSON.parse(localStorage.getItem("electionVotes"));
+    let detailedVotes = JSON.parse(localStorage.getItem("detailedVotes")) || []; // NEW
+    
+    // Get voter info for the receipt
+    const voterDetails = validVoters.find(v => v.id === studentId);
+    let currentBallot = {
+        voterId: studentId,
+        voterName: voterDetails.name,
+        course: voterDetails.course,
+        votes: {}
+    };
 
     const positions = Object.keys(electionVotes);
     positions.forEach(pos => {
         const selected = document.querySelector(`input[name='${pos}']:checked`);
         if (selected) {
             electionVotes[pos][selected.value]++;
+            currentBallot.votes[pos] = selected.value; // Save the specific candidate chosen
         }
     });
 
+    // Save everything
     localStorage.setItem("electionVotes", JSON.stringify(electionVotes));
+    
+    detailedVotes.push(currentBallot);
+    localStorage.setItem("detailedVotes", JSON.stringify(detailedVotes)); // NEW
 
     let votedList = JSON.parse(localStorage.getItem("votedList")) || [];
     votedList.push(studentId);
     localStorage.setItem("votedList", JSON.stringify(votedList));
 
     document.getElementById("voteForm").reset();
-
     document.getElementById("votingSection").classList.add("hidden");
     document.getElementById("successSection").classList.remove("hidden");
 });
@@ -167,6 +182,55 @@ function showResults() {
     resultsDiv.classList.remove("hidden");
 }
 
+function showVoterHistory() {
+    const detailedVotes = JSON.parse(localStorage.getItem("detailedVotes")) || [];
+    const historyDiv = document.getElementById("voterHistoryContainer");
+    
+    // Hide standard results if open
+    document.getElementById("adminResults").classList.add("hidden"); 
+
+    if (detailedVotes.length === 0) {
+        historyDiv.innerHTML = "<h3>VOTER AUDIT LOG</h3><p>No votes have been cast yet.</p>";
+        historyDiv.classList.remove("hidden");
+        return;
+    }
+
+    let tableHTML = `
+        <h3>VOTER AUDIT LOG</h3>
+        <div class="table-responsive">
+            <table class="voter-history-table">
+                <thead>
+                    <tr>
+                        <th>Voter Identity</th>
+                        <th>Ballot Details (Choices)</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    detailedVotes.forEach(record => {
+        let ballotDetails = "";
+        for (const [position, candidate] of Object.entries(record.votes)) {
+            let displayPos = position.toUpperCase().replace("_", " ");
+            ballotDetails += `<span class="vote-badge"><strong>${displayPos}:</strong> ${candidate}</span>`;
+        }
+
+        tableHTML += `
+            <tr>
+                <td>
+                    <div class="voter-name">${record.voterName}</div>
+                    <div class="voter-id">ID: ${record.voterId} | ${record.course.toUpperCase()}</div>
+                </td>
+                <td>${ballotDetails}</td>
+            </tr>
+        `;
+    });
+
+    tableHTML += `</tbody></table></div>`;
+    historyDiv.innerHTML = tableHTML;
+    historyDiv.classList.remove("hidden");
+}
+
 function resetElection() {
     if (localStorage.getItem("currentSession") !== "admin") {
         alert("Unauthorized action!");
@@ -176,9 +240,11 @@ function resetElection() {
     if(confirm("CRITICAL WARNING: Are you sure you want to completely wipe all votes? This action cannot be undone.")) {
         localStorage.removeItem("electionVotes");
         localStorage.removeItem("votedList");
+        localStorage.removeItem("detailedVotes"); // NEW: Clear the audit log
         initElectionDB(); 
         alert("System Reset Complete. All votes are back to 0.");
         document.getElementById("adminResults").classList.add("hidden");
+        document.getElementById("voterHistoryContainer").classList.add("hidden");
     }
 }
 
