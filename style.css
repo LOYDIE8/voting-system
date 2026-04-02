@@ -1,3 +1,6 @@
+/* 1. GLOBAL SETUP                            */
+
+/* Main page background and text color */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -9,6 +12,7 @@ body {
     overflow-x: hidden;
 }
 
+/* Faded CTU logo in the background */
 body::before {
     content: "";
     position: fixed;
@@ -24,6 +28,9 @@ body::before {
     z-index: -1;
 }
 
+/* 2. MAIN LAYOUT BOX                         */
+
+/* The dark blue, centered box holding everything */
 .container {
     width: 90%;
     max-width: 600px;
@@ -35,13 +42,33 @@ body::before {
     border-top: 4px solid rgb(255, 215, 0);
 }
 
+/* 3. TEXT & TYPOGRAPHY                       */
+
+/* Main titles */
 h1 { color: #FFD700; }
+
+/* Subtitles with gold underline */
 h2 {
     margin-top: 20px;
     border-bottom: 1px solid #FFD700;
     padding-bottom: 5px;
 }
 
+/* Red error text */
+.message { color: #ff6b6b; font-weight: bold; font-size: 14px; }
+
+/* Clickable link to switch between logins */
+.toggle-link {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #FFD700;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* 4. FORMS & BUTTONS                         */
+
+/* Input text boxes */
 input[type="text"], input[type="password"] {
     padding: 12px;
     width: 85%;
@@ -52,6 +79,7 @@ input[type="text"], input[type="password"] {
     color: rgb(51, 51, 51);
 }
 
+/* Default gold button */
 button {
     padding: 12px 25px;
     background: rgb(255, 215, 0);
@@ -63,9 +91,9 @@ button {
     margin-top: 10px;
     transition: 0.3s;
 }
-
 button:hover { background: rgb(255, 170, 0); }
 
+/* Custom button colors */
 .admin-btn { background: rgb(23, 162, 184); color: white; border: none; width: 100%; margin-bottom: 10px;}
 .admin-btn:hover { background: rgb(19, 132, 150); }
 
@@ -75,29 +103,32 @@ button:hover { background: rgb(255, 170, 0); }
 .submit-btn { width: 100%; font-size: 16px; background: #28a745; color: white; }
 .submit-btn:hover { background: rgb(33, 136, 56); }
 
-.toggle-link {
-    margin-top: 15px;
-    font-size: 14px;
-    color: #FFD700;
-    cursor: pointer;
-    text-decoration: underline;
-}
+/* 5. VISIBILITY CONTROL                      */
 
-.message { color: #ff6b6b; font-weight: bold; font-size: 14px; }
+/* CRITICAL: Hides sections completely */
 .hidden { display: none !important; }
 
+
+/* 6. BALLOT & RESULTS LAYOUT                 */
+
+
+/* Box for live admin results */
 .results { text-align: left; margin-top: 20px; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px;}
+
+/* Group box for a specific position (e.g., President) */
 .candidate-group { text-align: left; margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 5px;}
 .candidate-group h3 { margin-top: 0; color: #FFD700; font-size: 18px;}
+
+/* Spacing for radio buttons */
 label { display: block; margin: 8px 0; cursor: pointer; font-size: 16px;}
 
-/* --- Voter History Table Styles --- */
-.table-responsive {
-    width: 100%;
-    overflow-x: auto;
-    margin-top: 15px;
-}
 
+/* 7. ADMIN AUDIT TABLE                       */
+
+/* Scrollable container for smaller screens */
+.table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; }
+
+/* Table styling */
 .voter-history-table {
     width: 100%;
     border-collapse: collapse;
@@ -108,41 +139,19 @@ label { display: block; margin: 8px 0; cursor: pointer; font-size: 16px;}
     font-size: 14px;
 }
 
-.voter-history-table th {
-    background: rgb(255, 215, 0);
-    color: rgb(0, 12, 42);
-    padding: 12px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
+/* Table headers (Top row) */
+.voter-history-table th { background: rgb(255, 215, 0); color: rgb(0, 12, 42); padding: 12px; font-weight: bold; }
 
-.voter-history-table td {
-    padding: 12px;
-    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
-    vertical-align: top;
-}
+/* Table rows */
+.voter-history-table td { padding: 12px; border-bottom: 1px solid rgba(255, 215, 0, 0.2); vertical-align: top; }
+.voter-history-table tr:last-child td { border-bottom: none; }
+.voter-history-table tr:hover { background: rgba(255, 215, 0, 0.05); }
 
-.voter-history-table tr:last-child td {
-    border-bottom: none;
-}
+/* Left column: Voter details */
+.voter-name { font-weight: bold; color: #fff; font-size: 16px; }
+.voter-id { font-size: 12px; color: #FFD700; margin-top: 4px; }
 
-.voter-history-table tr:hover {
-    background: rgba(255, 215, 0, 0.05);
-}
-
-.voter-name {
-    font-weight: bold;
-    color: #fff;
-    font-size: 16px;
-}
-
-.voter-id {
-    font-size: 12px;
-    color: #FFD700;
-    margin-top: 4px;
-}
-
+/* Right column: Voted candidate badges */
 .vote-badge {
     display: inline-block;
     background: rgba(23, 162, 184, 0.15);
@@ -152,9 +161,5 @@ label { display: block; margin: 8px 0; cursor: pointer; font-size: 16px;}
     font-size: 12px;
     margin: 4px;
     color: #e0f7fa;
-    line-height: 1.4;
 }
-
-.vote-badge strong {
-    color: #FFD700;
-}
+.vote-badge strong { color: #FFD700; }

@@ -1,9 +1,10 @@
+// 1. DATABASE INITIALIZATION
 function initElectionDB() {
    if (!localStorage.getItem("electionVotes")) {
-        const initialVotes = {};
+        const initialVotes = {}; 
         
         for (let position in electionCandidates) {
-            initialVotes[position] = {};
+            initialVotes[position] = {}; 
             for (let i = 0; i < electionCandidates[position].length; i++) {
                 let candidateName = electionCandidates[position][i];
                 initialVotes[position][candidateName] = 0;
@@ -11,11 +12,12 @@ function initElectionDB() {
         }
         localStorage.setItem("electionVotes", JSON.stringify(initialVotes));
         localStorage.setItem("votedList", JSON.stringify([])); 
-        localStorage.setItem("detailedVotes", JSON.stringify([]));
+        localStorage.setItem("detailedVotes", JSON.stringify([])); 
     }
 }
 initElectionDB(); 
 
+// 2. UI NAVIGATION
 function toggleLogin(type) {
     if (type === 'admin') {
         document.getElementById("studentLoginBox").classList.add("hidden");
@@ -26,27 +28,28 @@ function toggleLogin(type) {
     }
 }
 
+// 3. STUDENT LOGIN LOGIC
 function loginStudent() {
     const studentName = document.getElementById("studentName").value.trim();
     const studentId = document.getElementById("studentId").value.trim();
-    const messageBox = document.getElementById("loginMessage");
+    const messageBox = document.getElementById("loginMessage"); 
 
     if (!studentName || !studentId) {
         messageBox.innerText = "Please enter both Name and ID.";
-        return;
+        return; 
     }
 
     const isValid = validVoters.find(v => v.name.toLowerCase() === studentName.toLowerCase() && v.id === studentId);
     
     if (!isValid) {
         messageBox.innerText = "Invalid credentials. Name and ID do not match our records.";
-        return;
+        return; 
     }
 
     let votedList = JSON.parse(localStorage.getItem("votedList")) || [];
     if (votedList.includes(studentId)) {
         messageBox.innerText = "Access Denied: You have already cast your vote.";
-        return;
+        return; 
     }
 
     localStorage.setItem("currentSession", "voter_" + studentId);
@@ -59,10 +62,10 @@ function loginStudent() {
     document.getElementById("votingSection").classList.remove("hidden");
 }
 
-
+// 4. GENERATING THE BALLOT
 function buildBallot() {
     const electionVotes = JSON.parse(localStorage.getItem("electionVotes"));
-    const voterCourse = localStorage.getItem("voterCourse");
+    const voterCourse = localStorage.getItem("voterCourse"); 
     const container = document.getElementById("ballotContainer");
     container.innerHTML = ""; 
 
@@ -70,11 +73,9 @@ function buildBallot() {
     const generalPositions = ["president", "vice", "secretary", "treasurer"];
 
     for (let position in electionVotes) {
-        let showPosition = false;
+        let showPosition = false; 
 
-        if (generalPositions.includes(position)) {
-            showPosition = true;
-        } else if (position === voterCourse) {
+        if (generalPositions.includes(position) || position === voterCourse) {
             showPosition = true;
         }
 
@@ -101,56 +102,88 @@ function buildBallot() {
     }
 }
 
-document.getElementById("voteForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+// 5. SUBMITTING THE VOTE
+document.getElementById("voteForm").addEventListener("submit", async function(e) {
+    e.preventDefault(); 
 
     const currentSession = localStorage.getItem("currentSession");
     if (!currentSession || !currentSession.startsWith("voter_")) return;
 
     const studentId = currentSession.split("_")[1];
-    let electionVotes = JSON.parse(localStorage.getItem("electionVotes"));
-    let detailedVotes = JSON.parse(localStorage.getItem("detailedVotes")) || []; // NEW
-    
-    // Get voter info for the receipt
     const voterDetails = validVoters.find(v => v.id === studentId);
-    let currentBallot = {
-        voterId: studentId,
-        voterName: voterDetails.name,
-        course: voterDetails.course,
-        votes: {}
-    };
+    
+    let myVotes = {};
+    const repPositions = ["bsit", "bshm", "bsie", "bsed", "bit_auto", "bit_et", "bit_comp"];
+    const generalPositions = ["president", "vice", "secretary", "treasurer"];
+    const allPositions = generalPositions.concat(repPositions);
 
-    const positions = Object.keys(electionVotes);
-    positions.forEach(pos => {
+    allPositions.forEach(pos => {
         const selected = document.querySelector(`input[name='${pos}']:checked`);
         if (selected) {
-            electionVotes[pos][selected.value]++;
-            currentBallot.votes[pos] = selected.value; // Save the specific candidate chosen
+            myVotes[pos] = selected.value; 
         }
     });
 
-    // Save everything
-    localStorage.setItem("electionVotes", JSON.stringify(electionVotes));
-    
-    detailedVotes.push(currentBallot);
-    localStorage.setItem("detailedVotes", JSON.stringify(detailedVotes)); // NEW
+    const payload = {
+        studentId: studentId,
+        lastName: voterDetails.name,
+        course: voterDetails.course,
+        votes: myVotes
+    };
 
-    let votedList = JSON.parse(localStorage.getItem("votedList")) || [];
-    votedList.push(studentId);
-    localStorage.setItem("votedList", JSON.stringify(votedList));
+    try {
+        let response = await fetch('vote.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
 
-    document.getElementById("voteForm").reset();
-    document.getElementById("votingSection").classList.add("hidden");
-    document.getElementById("successSection").classList.remove("hidden");
-});
+        let result = await response.json();
 
+        if (result.status === "success") {
+            let votedList = JSON.parse(localStorage.getItem("votedList")) || [];
+            votedList.push(studentId);
+            localStorage.setItem("votedList", JSON.stringify(votedList));
+
+            let electionVotes = JSON.parse(localStorage.getItem("electionVotes"));
+            for (const [position, candidate] of Object.entries(myVotes)) {
+                if (electionVotes[position] && electionVotes[position][candidate] !== undefined) {
+                    electionVotes[position][candidate]++;
+                }
+            }
+            localStorage.setItem("electionVotes", JSON.stringify(electionVotes));
+
+            let detailedVotes = JSON.parse(localStorage.getItem("detailedVotes")) || [];
+            detailedVotes.push({
+                voterId: studentId,
+                voterName: payload.lastName,
+                course: payload.course,
+                votes: myVotes
+            });
+            localStorage.setItem("detailedVotes", JSON.stringify(detailedVotes));
+
+            document.getElementById("voteForm").reset();
+            document.getElementById("votingSection").classList.add("hidden");
+            document.getElementById("successSection").classList.remove("hidden");
+        } else {
+            alert(result.message);
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Could not connect to the database. Make sure Apache and MySQL are running in XAMPP!");
+    }
+}); 
+
+// 6. ADMIN LOGIC
 function loginAdmin() {
     const user = document.getElementById("adminUser").value;
     const pass = document.getElementById("adminPass").value;
     const msg = document.getElementById("adminLoginMessage");
 
     if (user === "admin" && pass === "admin123") {
-        localStorage.setItem("currentSession", "admin");
+        localStorage.setItem("currentSession", "admin"); 
+        
         document.getElementById("loginSection").classList.add("hidden");
         document.getElementById("adminDashboard").classList.remove("hidden");
     } else {
@@ -161,6 +194,8 @@ function loginAdmin() {
 function showResults() {
     const data = JSON.parse(localStorage.getItem("electionVotes"));
     const resultsDiv = document.getElementById("adminResults");
+    
+    document.getElementById("voterHistoryContainer").classList.add("hidden");
     
     const repPositions = ["bsit", "bshm", "bsie", "bsed", "bit_auto", "bit_et", "bit_comp"];
     let output = "<h3>LIVE VOTE TALLY:</h3>";
@@ -186,7 +221,6 @@ function showVoterHistory() {
     const detailedVotes = JSON.parse(localStorage.getItem("detailedVotes")) || [];
     const historyDiv = document.getElementById("voterHistoryContainer");
     
-    // Hide standard results if open
     document.getElementById("adminResults").classList.add("hidden"); 
 
     if (detailedVotes.length === 0) {
@@ -210,6 +244,7 @@ function showVoterHistory() {
 
     detailedVotes.forEach(record => {
         let ballotDetails = "";
+        
         for (const [position, candidate] of Object.entries(record.votes)) {
             let displayPos = position.toUpperCase().replace("_", " ");
             ballotDetails += `<span class="vote-badge"><strong>${displayPos}:</strong> ${candidate}</span>`;
@@ -231,24 +266,40 @@ function showVoterHistory() {
     historyDiv.classList.remove("hidden");
 }
 
-function resetElection() {
+// Wipes the entire database clean (Browser AND MySQL)
+async function resetElection() {
     if (localStorage.getItem("currentSession") !== "admin") {
         alert("Unauthorized action!");
         return;
     }
 
     if(confirm("CRITICAL WARNING: Are you sure you want to completely wipe all votes? This action cannot be undone.")) {
-        localStorage.removeItem("electionVotes");
-        localStorage.removeItem("votedList");
-        localStorage.removeItem("detailedVotes"); // NEW: Clear the audit log
-        initElectionDB(); 
-        alert("System Reset Complete. All votes are back to 0.");
-        document.getElementById("adminResults").classList.add("hidden");
-        document.getElementById("voterHistoryContainer").classList.add("hidden");
+        
+        try {
+            let response = await fetch('reset.php', { method: 'POST' });
+            let result = await response.json();
+
+            if (result.status === "success") {
+                localStorage.removeItem("electionVotes");
+                localStorage.removeItem("votedList");
+                localStorage.removeItem("detailedVotes"); 
+                
+                initElectionDB(); 
+                
+                alert("System Reset Complete. Both the Database and Local Memory are back to 0.");
+                
+                document.getElementById("adminResults").classList.add("hidden");
+                document.getElementById("voterHistoryContainer").classList.add("hidden");
+            }
+        } catch (error) {
+            console.error("Error wiping database:", error);
+            alert("Failed to reach the database. Make sure XAMPP is running!");
+        }
     }
 }
 
+// Clears the active session and refreshes the page
 function logout() {
     localStorage.removeItem("currentSession");
     location.reload(); 
-}
+}   
